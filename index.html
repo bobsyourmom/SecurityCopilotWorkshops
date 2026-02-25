@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Copilot Student Challenge!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0e1220;
+    --surface2: #141a2e;
+    --surface3: #1a2240;
+    --border: rgba(99,148,255,0.12);
+    --border-bright: rgba(99,148,255,0.28);
+    --text: #e4ecff;
+    --text-dim: #6478a0;
+    --blue: #6394ff;
+    --blue-dim: rgba(99,148,255,0.13);
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.12);
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.11);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.12);
+    --pink: #f472b6;
+    --pink-dim: rgba(244,114,182,0.12);
+    --orange: #fb923c;
+    --orange-dim: rgba(251,146,60,0.12);
+    --yellow: #fbbf24;
+    --yellow-dim: rgba(251,191,36,0.13);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.12);
+    --font-display: 'Unbounded', system-ui, sans-serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-mono: 'DM Mono', 'SF Mono', Consolas, monospace;
+    --grad: linear-gradient(135deg, #6394ff 0%, #a78bfa 50%, #f472b6 100%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(99,148,255,0.10) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(167,139,250,0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 100%, rgba(244,114,182,0.07) 0%, transparent 45%);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-wrap: break-word;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeScale {
+    from { opacity: 0; transform: scale(0.90); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(99,148,255,0.15); }
+    50% { box-shadow: 0 0 40px rgba(99,148,255,0.30); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    text-align: center;
+    padding: 64px 40px 48px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.6s ease-out both;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(99,148,255,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--cyan);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 40px;
+    background: var(--cyan);
+    opacity: 0.4;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    background: var(--grad);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  .hero-sub {
+    font-family: var(--font-display);
+    font-size: clamp(14px, 2vw, 18px);
+    font-weight: 400;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    letter-spacing: -0.3px;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto 36px;
+  }
+
+  /* ---- SCORING CARDS ---- */
+  .scoring-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 40px;
+    animation: fadeUp 0.5s ease-out 0.15s both;
+  }
+
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .score-card:hover { transform: translateY(-2px); border-color: var(--border-bright); }
+
+  .score-card .pts {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .score-card .pts-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+  }
+
+  .score-card .pts-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ---- DIVIDER ---- */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 36px 40px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-divider .divider-label {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dim);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .section-divider .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ---- FORM WRAPPER ---- */
+  .form-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeUp 0.5s ease-out 0.25s both;
+  }
+
+  /* ---- STUDENT INFO ---- */
+  .student-card {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 14px;
+    padding: 24px 28px;
+  }
+
+  .card-header {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--blue);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-header .ch-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--blue);
+    flex-shrink: 0;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+  }
+
+  .field input, .field textarea, .field select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+
+  .field input:focus, .field textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(99,148,255,0.12);
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.55;
+    font-size: 13px;
+  }
+
+  /* ---- PROMPT CARD ---- */
+  .prompt-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .prompt-card:focus-within { border-color: var(--border-bright); }
+
+  .prompt-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .prompt-number {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .prompt-num-badge {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .remove-btn {
+    background: var(--red-dim);
+    border: 1px solid rgba(248,113,113,0.2);
+    color: var(--red);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .remove-btn:hover { background: rgba(248,113,113,0.2); }
+  .remove-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ---- PLUGIN SELECTOR ---- */
+  .plugin-section {
+    margin-bottom: 16px;
+  }
+
+  .plugin-section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .plugin-section-label .req {
+    color: var(--orange);
+    font-size: 9px;
+  }
+
+  .plugin-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .plugin-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    position: relative;
+  }
+
+  .plugin-pill input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .plugin-pill:hover {
+    border-color: var(--border-bright);
+    color: var(--text);
+  }
+
+  .plugin-pill.selected {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .pill-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+
+  .plugin-pill.selected .pill-dot { opacity: 1; }
+
+  /* Plugin colors */
+  .pill-xdr.selected     { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.35); }
+  .pill-entra.selected   { background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.35); }
+  .pill-defender.selected{ background: rgba(74,222,128,0.11); border-color: rgba(74,222,128,0.35); }
+  .pill-sentinel.selected{ background: rgba(34,211,238,0.11); border-color: rgba(34,211,238,0.35); }
+  .pill-purview.selected { background: rgba(167,139,250,0.12); border-color: rgba(167,139,250,0.35); }
+  .pill-ti.selected      { background: rgba(251,146,60,0.12); border-color: rgba(251,146,60,0.35); }
+  .pill-intune.selected  { background: rgba(74,222,128,0.10); border-color: rgba(74,222,128,0.30); }
+  .pill-m365.selected    { background: rgba(99,148,255,0.12); border-color: rgba(99,148,255,0.35); }
+  .pill-cloud.selected   { background: rgba(34,211,238,0.10); border-color: rgba(34,211,238,0.30); }
+  .pill-agent.selected   { background: rgba(251,191,36,0.13); border-color: rgba(251,191,36,0.40); }
+
+  /* ---- AGENT TOGGLE ---- */
+  .agent-toggle {
+    margin-top: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+
+  .agent-toggle:hover { border-color: var(--border-bright); }
+
+  .agent-toggle.active {
+    background: var(--yellow-dim);
+    border-color: rgba(251,191,36,0.4);
+  }
+
+  .agent-toggle input[type="checkbox"] {
+    position: absolute;
+    opacity: 0; width: 0; height: 0;
+  }
+
+  .agent-checkbox-vis {
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 2px solid var(--border-bright);
+    background: var(--surface3);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+    font-size: 12px;
+  }
+
+  .agent-toggle.active .agent-checkbox-vis {
+    background: var(--yellow);
+    border-color: var(--yellow);
+    color: #1a1200;
+  }
+
+  .agent-label {
+    flex: 1;
+  }
+
+  .agent-label .al-title {
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bonus-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--yellow-dim);
+    color: var(--yellow);
+    border: 1px solid rgba(251,191,36,0.3);
+  }
+
+  .agent-label .al-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .agent-name-field {
+    margin-top: 10px;
+    display: none;
+  }
+
+  .agent-toggle.active + .agent-name-field { display: block; }
+
+  /* ---- LIVE SCORE ---- */
+  .live-score-bar {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 14px;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .ls-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+  }
+
+  .ls-score {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: var(--grad);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+    line-height: 1;
+  }
+
+  .ls-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ls-item {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .ls-item.active { color: var(--text); border-color: var(--border-bright); }
+
+  /* ---- BUTTONS ---- */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn-add {
+    flex: 1;
+    background: var(--surface);
+    border: 1px dashed var(--border-bright);
+    border-radius: 10px;
+    padding: 14px 20px;
+    color: var(--text-dim);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-add:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+
+  .btn-generate {
+    background: var(--grad);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 32px;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    text-transform: uppercase;
+  }
+
+  .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-generate:active { transform: translateY(0); }
+
+  /* ---- CHALLENGE CARD (OUTPUT) ---- */
+  #challenge-output { display: none; }
+
+  .challenge-card {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 40px;
+    animation: fadeScale 0.45s ease-out both;
+  }
+
+  .challenge-card-inner {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(99,148,255,0.10);
+  }
+
+  .cc-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .cc-header-left .cc-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    background: var(--grad);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  .cc-header-left .cc-student {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .cc-final-score {
+    text-align: center;
+  }
+
+  .cc-final-score .fs-num {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: var(--grad);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+    line-height: 1;
+  }
+
+  .cc-final-score .fs-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .cc-body { padding: 28px 32px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* Submitted prompt card */
+  .sub-prompt {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative;
+  }
+
+  .sub-prompt-num {
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .sub-prompt-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+  }
+
+  .sub-prompt-plugins {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .sub-plugin-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 5px;
+  }
+
+  .sub-prompt-text {
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text);
+    font-style: italic;
+    position: relative;
+  }
+
+  .sub-prompt-text::before {
+    content: '"';
+    font-family: var(--font-display);
+    font-size: 40px;
+    color: var(--blue);
+    opacity: 0.3;
+    position: absolute;
+    top: 4px;
+    left: 10px;
+    line-height: 1;
+  }
+
+  .sub-prompt-text .prompt-inner { padding-left: 28px; }
+
+  .sub-agent-badge {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--yellow-dim);
+    border: 1px solid rgba(251,191,36,0.35);
+    color: var(--yellow);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 6px;
+  }
+
+  .sub-pts {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .cc-footer {
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .cc-footer .cf-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .btn-print {
+    background: var(--blue-dim);
+    border: 1px solid rgba(99,148,255,0.3);
+    color: var(--blue);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .btn-print:hover { background: rgba(99,148,255,0.2); }
+
+  .btn-reset {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .btn-reset:hover { border-color: var(--border-bright); color: var(--text); }
+
+  /* ---- RULES SECTION ---- */
+  .rules-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px 32px;
+    animation: fadeUp 0.5s ease-out 0.1s both;
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .rule-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .rule-card .rc-num {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+
+  .rule-card .rc-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .rule-card .rc-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  /* validation */
+  .field input.error, .field textarea.error {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(248,113,113,0.12);
+  }
+
+  .error-msg {
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 3px;
+    display: none;
+  }
+
+  .field input.error + .error-msg,
+  .field textarea.error + .error-msg { display: block; }
+
+  .plugin-required-msg {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--red);
+    margin-top: 6px;
+    display: none;
+  }
+
+  @media (max-width: 720px) {
+    .hero { padding: 40px 20px 32px; }
+    .scoring-grid, .form-wrap, .rules-section, .challenge-card { padding-left: 20px; padding-right: 20px; }
+    .field-row { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .student-card, .prompt-card { padding: 18px 16px; }
+    .cc-body { padding: 20px 18px; }
+    .cc-header { padding: 18px; }
+  }
+
+  @media print {
+    body { background: white; color: black; }
+    .form-wrap, .rules-section, .scoring-grid, .btn-print, .btn-reset, .btn-row, .section-divider { display: none !important; }
+    #challenge-output { display: block !important; }
+    .challenge-card { padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-eyebrow">Security Copilot Training</div>
+  <h1>Student Challenge!</h1>
+  <p class="hero-sub">Put your Security Copilot skills to the test</p>
+  <p class="hero-desc">Create <strong>2 or more</strong> original, creative Security Copilot prompt examples. Each prompt must have a clear use case, select the plugins that would provide useful context, and include a well-crafted prompt. Earn bonus points for using or designing a custom Security Copilot agent.</p>
+</div>
+
+<!-- ===== SCORING ===== -->
+<div class="scoring-grid">
+  <div class="score-card">
+    <div class="pts" style="color:var(--blue)">10</div>
+    <div class="pts-label">pts each</div>
+    <div class="pts-desc">Base points per submitted prompt</div>
+  </div>
+  <div class="score-card">
+    <div class="pts" style="color:var(--cyan)">+3</div>
+    <div class="pts-label">per extra plugin</div>
+    <div class="pts-desc">Each plugin beyond the first adds points</div>
+  </div>
+  <div class="score-card">
+    <div class="pts" style="color:var(--green)">+5</div>
+    <div class="pts-label">per extra prompt</div>
+    <div class="pts-desc">Go beyond the minimum 2 prompts</div>
+  </div>
+  <div class="score-card">
+    <div class="pts" style="color:var(--yellow)">+20</div>
+    <div class="pts-label">agent bonus</div>
+    <div class="pts-desc">Use or design a custom Security Copilot agent</div>
+  </div>
+  <div class="score-card">
+    <div class="pts" style="color:var(--purple)">+?</div>
+    <div class="pts-label">creativity</div>
+    <div class="pts-desc">Instructor-awarded points for originality and insight</div>
+  </div>
+</div>
+
+<!-- ===== RULES ===== -->
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-label">Challenge Rules</div>
+  <div class="divider-line"></div>
+</div>
+
+<div class="rules-section">
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rc-num" style="color:var(--blue)">Rule 01</div>
+      <div class="rc-title">Be Specific</div>
+      <div class="rc-desc">Great Security Copilot prompts include entity identifiers, time ranges, and clear investigation goals. Vague prompts score lower than targeted, actionable ones.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rc-num" style="color:var(--cyan)">Rule 02</div>
+      <div class="rc-title">Match Plugins to Use Case</div>
+      <div class="rc-desc">Choose only the plugins that genuinely contribute to the investigation. Selecting irrelevant plugins doesn't earn extra points — accuracy matters.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rc-num" style="color:var(--green)">Rule 03</div>
+      <div class="rc-title">Think Like an Analyst</div>
+      <div class="rc-desc">The best prompts solve real-world SOC problems — account takeovers, data exfiltration, endpoint threats, compliance gaps. Be creative and realistic.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FORM ===== -->
+<div class="section-divider">
+  <div class="divider-line"></div>
+  <div class="divider-label">Your Submission</div>
+  <div class="divider-line"></div>
+</div>
+
+<div class="form-wrap" id="form-wrap">
+
+  <!-- Student info -->
+  <div class="student-card">
+    <div class="card-header"><span class="ch-dot"></span> Student Information</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="student-name">Your Name</label>
+        <input type="text" id="student-name" placeholder="e.g. Jane Smith">
+        <span class="error-msg">Please enter your name.</span>
+      </div>
+      <div class="field">
+        <label for="student-org">Organization / Team (optional)</label>
+        <input type="text" id="student-org" placeholder="e.g. Trustwave SOC Team">
+      </div>
+    </div>
+  </div>
+
+  <!-- Live score -->
+  <div class="live-score-bar">
+    <div>
+      <div class="ls-label">Live Score</div>
+      <div class="ls-score" id="live-score">0</div>
+    </div>
+    <div class="ls-breakdown" id="score-breakdown">
+      <span class="ls-item" id="sb-prompts">0 prompts</span>
+      <span class="ls-item" id="sb-plugins">0 plugin bonus</span>
+      <span class="ls-item" id="sb-extra">0 extra prompts</span>
+      <span class="ls-item" id="sb-agent">no agent</span>
+    </div>
+  </div>
+
+  <!-- Prompt cards container -->
+  <div id="prompts-container"></div>
+
+  <!-- Action buttons -->
+  <div class="btn-row">
+    <button class="btn-add" onclick="addPrompt()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Another Prompt (+5 pts)
+    </button>
+    <button class="btn-generate" onclick="generateCard()">Generate Challenge Card</button>
+  </div>
+
+</div>
+
+<!-- ===== CHALLENGE CARD OUTPUT ===== -->
+<div id="challenge-output">
+  <div class="section-divider" style="max-width:900px;margin:0 auto;padding:20px 40px 24px;">
+    <div class="divider-line"></div>
+    <div class="divider-label">Your Challenge Card</div>
+    <div class="divider-line"></div>
+  </div>
+  <div class="challenge-card">
+    <div class="challenge-card-inner">
+      <div class="cc-header">
+        <div class="cc-header-left">
+          <div class="cc-title">Security Copilot Challenge</div>
+          <div class="cc-student" id="cc-student-name"></div>
+        </div>
+        <div class="cc-final-score">
+          <div class="fs-num" id="cc-score"></div>
+          <div class="fs-label">Total Points</div>
+        </div>
+      </div>
+      <div class="cc-body" id="cc-body"></div>
+      <div class="cc-footer">
+        <div class="cf-label">Security Copilot Student Challenge &mdash; <span id="cc-date"></span></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-reset" onclick="resetForm()">Start Over</button>
+          <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* -------- DATA -------- */
+const PLUGINS = [
+  { id: 'entra',    label: 'Microsoft Entra',          cls: 'pill-entra',   color: '#22d3ee',  bg: 'rgba(56,189,248,0.15)',   border: 'rgba(56,189,248,0.4)'  },
+  { id: 'xdr',      label: 'Defender XDR',             cls: 'pill-xdr',     color: '#f87171',  bg: 'rgba(248,113,113,0.15)',  border: 'rgba(248,113,113,0.4)' },
+  { id: 'defender', label: 'Defender for Endpoint',    cls: 'pill-defender',color: '#4ade80',  bg: 'rgba(74,222,128,0.13)',   border: 'rgba(74,222,128,0.4)'  },
+  { id: 'sentinel', label: 'Microsoft Sentinel',       cls: 'pill-sentinel',color: '#22d3ee',  bg: 'rgba(34,211,238,0.13)',   border: 'rgba(34,211,238,0.4)'  },
+  { id: 'purview',  label: 'Microsoft Purview',        cls: 'pill-purview', color: '#a78bfa',  bg: 'rgba(167,139,250,0.15)',  border: 'rgba(167,139,250,0.4)' },
+  { id: 'ti',       label: 'Defender Threat Intel',    cls: 'pill-ti',      color: '#fb923c',  bg: 'rgba(251,146,60,0.15)',   border: 'rgba(251,146,60,0.4)'  },
+  { id: 'intune',   label: 'Microsoft Intune',         cls: 'pill-intune',  color: '#4ade80',  bg: 'rgba(74,222,128,0.11)',   border: 'rgba(74,222,128,0.35)' },
+  { id: 'm365',     label: 'Microsoft 365',            cls: 'pill-m365',    color: '#6394ff',  bg: 'rgba(99,148,255,0.15)',   border: 'rgba(99,148,255,0.4)'  },
+  { id: 'cloud',    label: 'Defender for Cloud',       cls: 'pill-cloud',   color: '#2dd4bf',  bg: 'rgba(45,212,191,0.13)',   border: 'rgba(45,212,191,0.4)'  },
+];
+
+const PROMPT_COLORS = [
+  { label: '#6394ff', badge: 'rgba(99,148,255,0.15)', badgeBorder: 'rgba(99,148,255,0.4)' },
+  { label: '#a78bfa', badge: 'rgba(167,139,250,0.15)', badgeBorder: 'rgba(167,139,250,0.4)' },
+  { label: '#22d3ee', badge: 'rgba(34,211,238,0.13)', badgeBorder: 'rgba(34,211,238,0.4)' },
+  { label: '#4ade80', badge: 'rgba(74,222,128,0.13)', badgeBorder: 'rgba(74,222,128,0.4)' },
+  { label: '#f472b6', badge: 'rgba(244,114,182,0.13)', badgeBorder: 'rgba(244,114,182,0.4)' },
+];
+
+let promptCount = 0;
+let promptIds = [];
+
+/* -------- INIT -------- */
+document.addEventListener('DOMContentLoaded', function() {
+  addPrompt();
+  addPrompt();
+});
+
+/* -------- ADD PROMPT -------- */
+function addPrompt() {
+  promptCount++;
+  var id = 'prompt-' + promptCount;
+  promptIds.push(id);
+  var color = PROMPT_COLORS[(promptCount - 1) % PROMPT_COLORS.length];
+  var isRequired = promptCount <= 2;
+
+  var pillsHTML = PLUGINS.map(function(p) {
+    return '<label class="plugin-pill ' + p.cls + '" data-prompt="' + id + '" data-plugin="' + p.id + '">' +
+      '<input type="checkbox" value="' + p.id + '" onchange="onPluginChange(\'' + id + '\')">' +
+      '<span class="pill-dot" style="background:' + p.color + '"></span>' +
+      p.label +
+      '</label>';
+  }).join('');
+
+  var html = '<div class="prompt-card" id="' + id + '" data-id="' + id + '">' +
+    '<div class="prompt-card-header">' +
+      '<div class="prompt-number">' +
+        '<div class="prompt-num-badge" style="background:' + color.badge + ';border:1px solid ' + color.badgeBorder + ';color:' + color.label + '">' + promptCount + '</div>' +
+        '<span style="color:' + color.label + '">Prompt ' + promptCount + (isRequired ? '' : ' <span style="color:var(--green);font-size:10px;vertical-align:middle">+5 pts</span>') + '</span>' +
+      '</div>' +
+      '<button class="remove-btn" onclick="removePrompt(\'' + id + '\')" ' + (isRequired ? 'disabled title="Minimum 2 prompts required"' : '') + '>Remove</button>' +
+    '</div>' +
+
+    '<div class="field" style="margin-bottom:14px">' +
+      '<label>Use Case Title</label>' +
+      '<input type="text" id="' + id + '-title" placeholder="e.g. Compromised Account Investigation" oninput="updateScore()">' +
+      '<span class="error-msg">Please enter a use case title.</span>' +
+    '</div>' +
+
+    '<div class="plugin-section">' +
+      '<div class="plugin-section-label">Security Copilot Plugins <span class="req">— select all that apply</span></div>' +
+      '<div class="plugin-pills" id="' + id + '-pills">' + pillsHTML + '</div>' +
+      '<div class="plugin-required-msg" id="' + id + '-plugin-err">Please select at least one plugin.</div>' +
+    '</div>' +
+
+    '<div class="field" style="margin-bottom:12px">' +
+      '<label>Your Security Copilot Prompt</label>' +
+      '<textarea id="' + id + '-prompt" placeholder="Write your Security Copilot prompt here — be specific. Include entity names, time ranges, and what you\'re investigating..." rows="4" oninput="updateScore()"></textarea>' +
+      '<span class="error-msg">Please enter your prompt.</span>' +
+    '</div>' +
+
+    '<label class="agent-toggle" id="' + id + '-agent-toggle" onclick="toggleAgent(\'' + id + '\')">' +
+      '<input type="checkbox" id="' + id + '-agent-cb">' +
+      '<div class="agent-checkbox-vis" id="' + id + '-agent-vis"></div>' +
+      '<div class="agent-label">' +
+        '<div class="al-title">Uses a Custom Security Copilot Agent <span class="bonus-badge">+20 pts</span></div>' +
+        '<div class="al-desc">Check this if your prompt invokes an existing custom agent (like OSCAR) or if you\'re proposing a new custom agent design</div>' +
+      '</div>' +
+    '</label>' +
+    '<div class="agent-name-field" id="' + id + '-agent-name-wrap">' +
+      '<div class="field" style="margin-top:10px">' +
+        '<label>Agent Name / Description</label>' +
+        '<input type="text" id="' + id + '-agent-name" placeholder="e.g. OSCAR Compliance Agent, or describe your proposed custom agent" oninput="updateScore()">' +
+      '</div>' +
+    '</div>' +
+
+    '</div>';
+
+  var container = document.getElementById('prompts-container');
+  var tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  container.appendChild(tmp.firstChild);
+  updateScore();
+}
+
+/* -------- REMOVE PROMPT -------- */
+function removePrompt(id) {
+  var idx = promptIds.indexOf(id);
+  if (idx > -1) promptIds.splice(idx, 1);
+  var el = document.getElementById(id);
+  if (el) el.remove();
+  updateScore();
+}
+
+/* -------- PLUGIN TOGGLE -------- */
+function onPluginChange(promptId) {
+  var pills = document.querySelectorAll('[data-prompt="' + promptId + '"]');
+  pills.forEach(function(pill) {
+    var cb = pill.querySelector('input[type="checkbox"]');
+    if (cb.checked) {
+      pill.classList.add('selected');
+    } else {
+      pill.classList.remove('selected');
+    }
+  });
+  updateScore();
+}
+
+/* -------- AGENT TOGGLE -------- */
+function toggleAgent(id) {
+  var toggle = document.getElementById(id + '-agent-toggle');
+  var cb = document.getElementById(id + '-agent-cb');
+  var vis = document.getElementById(id + '-agent-vis');
+  var nameWrap = document.getElementById(id + '-agent-name-wrap');
+
+  cb.checked = !cb.checked;
+  if (cb.checked) {
+    toggle.classList.add('active');
+    vis.textContent = '✓';
+    nameWrap.style.display = 'block';
+  } else {
+    toggle.classList.remove('active');
+    vis.textContent = '';
+    nameWrap.style.display = 'none';
+  }
+  updateScore();
+}
+
+/* -------- SCORE CALCULATION -------- */
+function calcScore() {
+  var total = 0;
+  var promptPts = 0;
+  var pluginBonus = 0;
+  var extraBonus = 0;
+  var agentBonus = 0;
+  var agentUsed = false;
+
+  promptIds.forEach(function(id, idx) {
+    var title = (document.getElementById(id + '-title') || {}).value || '';
+    var prompt = (document.getElementById(id + '-prompt') || {}).value || '';
+    var agentCb = document.getElementById(id + '-agent-cb');
+
+    if (title.trim() || prompt.trim()) {
+      promptPts += 10;
+      if (idx >= 2) extraBonus += 5;
+    }
+
+    var pills = document.querySelectorAll('[data-prompt="' + id + '"] input[type="checkbox"]');
+    var checkedCount = 0;
+    pills.forEach(function(cb) { if (cb.checked) checkedCount++; });
+    if (checkedCount > 1) pluginBonus += (checkedCount - 1) * 3;
+
+    if (agentCb && agentCb.checked) agentUsed = true;
+  });
+
+  if (agentUsed) agentBonus = 20;
+  total = promptPts + pluginBonus + extraBonus + agentBonus;
+  return { total: total, promptPts: promptPts, pluginBonus: pluginBonus, extraBonus: extraBonus, agentBonus: agentBonus, agentUsed: agentUsed };
+}
+
+function updateScore() {
+  var s = calcScore();
+  document.getElementById('live-score').textContent = s.total;
+
+  var sbPrompts = document.getElementById('sb-prompts');
+  sbPrompts.textContent = s.promptPts + ' base pts';
+  sbPrompts.className = 'ls-item' + (s.promptPts > 0 ? ' active' : '');
+
+  var sbPlugins = document.getElementById('sb-plugins');
+  sbPlugins.textContent = s.pluginBonus > 0 ? '+' + s.pluginBonus + ' plugin bonus' : 'no plugin bonus';
+  sbPlugins.className = 'ls-item' + (s.pluginBonus > 0 ? ' active' : '');
+
+  var sbExtra = document.getElementById('sb-extra');
+  sbExtra.textContent = s.extraBonus > 0 ? '+' + s.extraBonus + ' extra prompts' : 'no extra prompts';
+  sbExtra.className = 'ls-item' + (s.extraBonus > 0 ? ' active' : '');
+
+  var sbAgent = document.getElementById('sb-agent');
+  sbAgent.textContent = s.agentUsed ? '+20 agent bonus!' : 'no agent';
+  sbAgent.className = 'ls-item' + (s.agentUsed ? ' active' : '');
+}
+
+/* -------- GENERATE CARD -------- */
+function generateCard() {
+  var valid = true;
+
+  // Validate student name
+  var nameEl = document.getElementById('student-name');
+  if (!nameEl.value.trim()) {
+    nameEl.classList.add('error');
+    valid = false;
+  } else {
+    nameEl.classList.remove('error');
+  }
+
+  // Validate prompts
+  promptIds.forEach(function(id) {
+    var titleEl = document.getElementById(id + '-title');
+    var promptEl = document.getElementById(id + '-prompt');
+    var pluginErr = document.getElementById(id + '-plugin-err');
+
+    if (!titleEl.value.trim()) {
+      titleEl.classList.add('error');
+      valid = false;
+    } else {
+      titleEl.classList.remove('error');
+    }
+
+    if (!promptEl.value.trim()) {
+      promptEl.classList.add('error');
+      valid = false;
+    } else {
+      promptEl.classList.remove('error');
+    }
+
+    var pills = document.querySelectorAll('[data-prompt="' + id + '"] input[type="checkbox"]');
+    var anyChecked = false;
+    pills.forEach(function(cb) { if (cb.checked) anyChecked = true; });
+    if (!anyChecked) {
+      pluginErr.style.display = 'block';
+      valid = false;
+    } else {
+      pluginErr.style.display = 'none';
+    }
+  });
+
+  if (!valid) {
+    window.scrollTo({ top: document.getElementById('form-wrap').offsetTop - 20, behavior: 'smooth' });
+    return;
+  }
+
+  var s = calcScore();
+  var studentName = document.getElementById('student-name').value.trim();
+  var studentOrg = document.getElementById('student-org').value.trim();
+  var displayName = studentName + (studentOrg ? ' &mdash; ' + studentOrg : '');
+
+  document.getElementById('cc-student-name').innerHTML = displayName;
+  document.getElementById('cc-score').textContent = s.total;
+  document.getElementById('cc-date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  var bodyHTML = '';
+
+  promptIds.forEach(function(id, idx) {
+    var color = PROMPT_COLORS[idx % PROMPT_COLORS.length];
+    var title = document.getElementById(id + '-title').value.trim();
+    var promptText = document.getElementById(id + '-prompt').value.trim();
+    var agentCb = document.getElementById(id + '-agent-cb');
+    var agentNameEl = document.getElementById(id + '-agent-name');
+    var agentName = agentNameEl ? agentNameEl.value.trim() : '';
+
+    // Get selected plugins
+    var selectedPlugins = [];
+    PLUGINS.forEach(function(p) {
+      var cb = document.querySelector('[data-prompt="' + id + '"] [value="' + p.id + '"]');
+      if (cb && cb.checked) selectedPlugins.push(p);
+    });
+
+    var promptPts = 10 + (idx >= 2 ? 5 : 0);
+    var plugBonus = selectedPlugins.length > 1 ? (selectedPlugins.length - 1) * 3 : 0;
+    var agentBonusThis = (agentCb && agentCb.checked) ? 20 : 0;
+    var thisPts = promptPts + plugBonus + agentBonusThis;
+
+    var pluginTagsHTML = selectedPlugins.map(function(p) {
+      return '<span class="sub-plugin-tag" style="background:' + p.bg + ';border:1px solid ' + p.border + ';color:' + p.color + '">' + p.label + '</span>';
+    }).join('');
+
+    var agentBadgeHTML = '';
+    if (agentCb && agentCb.checked) {
+      agentBadgeHTML = '<div class="sub-agent-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+        'Custom Agent' + (agentName ? ': ' + agentName : '') + ' &nbsp;+20 pts</div>';
+    }
+
+    bodyHTML += '<div class="sub-prompt">' +
+      '<div class="sub-prompt-num" style="color:' + color.label + '">Prompt ' + (idx + 1) + (idx >= 2 ? ' — Extra (+5 pts)' : '') + '</div>' +
+      '<div class="sub-prompt-title">' + escapeHTML(title) + '</div>' +
+      '<div class="sub-prompt-plugins">' + pluginTagsHTML + '</div>' +
+      '<div class="sub-prompt-text"><div class="prompt-inner">' + escapeHTML(promptText) + '</div></div>' +
+      agentBadgeHTML +
+      '<div class="sub-pts" style="color:var(--green)">+' + thisPts + ' pts</div>' +
+    '</div>';
+  });
+
+  document.getElementById('cc-body').innerHTML = bodyHTML;
+
+  // Show output, hide form
+  document.getElementById('challenge-output').style.display = 'block';
+  document.getElementById('form-wrap').style.display = 'none';
+
+  setTimeout(function() {
+    document.getElementById('challenge-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+/* -------- RESET -------- */
+function resetForm() {
+  document.getElementById('challenge-output').style.display = 'none';
+  document.getElementById('form-wrap').style.display = 'flex';
+  document.getElementById('prompts-container').innerHTML = '';
+  promptCount = 0;
+  promptIds = [];
+  document.getElementById('student-name').value = '';
+  document.getElementById('student-org').value = '';
+  addPrompt();
+  addPrompt();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* -------- UTIL -------- */
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
